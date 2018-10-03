@@ -74,7 +74,7 @@ class DttData():
 
     def getAllSpectrumName(self):
         for s in self.spect:
-            print s.Name,s.Subtype
+            print s.Name,s.Subtype,s.Channel['ChannelA']
 
     def getASDInfo(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
@@ -86,9 +86,9 @@ class DttData():
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
         asdlist = asd
         for asd in asdlist:
-            print asd.Name,asd.Subtype
+            #print asd.Name,asd.Subtype
             if ref==False:
-                if  'Result' in asd.Name:
+                if 'Result' in asd.Name:
                     return asd.f,asd.spectrum
             elif ref==True:
                 if 'Reference' in asd.Name:
@@ -115,7 +115,7 @@ class DttData():
                     num = num -1
                 elif num<numA:
                     num = num
-                print numA,num,csd[0].Channel[c]
+                #print numA,num,csd[0].Channel[c]
         return csd[0].f,csd[0].csd[num],csd[0].deg[num]
 
     def getCoherence(self,chnameA,chnameB):        
@@ -126,6 +126,14 @@ class DttData():
         mag = CSD_AB/(ASD_A*ASD_B)
         return f,mag,deg
 
+    def getTF(self,chnameA,chnameB):        
+        f = None
+        f,CSD_AB,deg = self.getCSD(chnameA,chnameB)
+        f,ASD_A = self.getASD(chnameA)
+        f,ASD_B = self.getASD(chnameB)
+        mag = CSD_AB/(ASD_B*ASD_B)
+        return f,mag,deg
+    
 
 def testReference():
     d.getAllSpectrumName()
