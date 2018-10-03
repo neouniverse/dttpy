@@ -5,7 +5,7 @@ from dttdata import DttData
 import numpy as np
 
 
-def plottf(date,sus,stage,dof,prefix='./template'):
+def plottf(date,sus,stage,dof,prefix='./healthCheckInspection'):
     ''' Plot transfer function from template xml file of the diaggui(dtt).
 
     This function export png file which plots single TF about dof you choose, 
@@ -33,7 +33,7 @@ def plottf(date,sus,stage,dof,prefix='./template'):
         Place where the dtt xml files are located. Default is "./template"
     '''
     #
-    xmlname = './template/{0}_{1}{2}_exc_{3}.xml'.format(sus,stage,dof,date)
+    xmlname = '{4}/{0}_{1}{2}_exc_{3}.xml'.format(sus,stage,dof,date,prefix)
     chA = 'K1:VIS-{0}_{1}_DAMP_{2}_IN1'.format(sus,stage,dof)
     chB = 'K1:VIS-{0}_{1}_TEST_{2}_EXC'.format(sus,stage,dof)
     d = DttData(xmlname)

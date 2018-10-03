@@ -1,0 +1,5 @@
+open
+restore ../PR2/TF/Templates/PR2_BFY_exc.xml
+run -w
+save ../PR2/TF/Measurements/20180628/PR2_BFY_exc_180628_1530164082.xml
+quit

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# $1: suspension name, like PR3
+echo "running all the measurement for "$1" ..."
+./run_measurement_TM $1 && ./run_measurement_IM $1 && ./run_measurement_GAS $1 && ./run_measurement_BF $1
+
+# without TM because it is locked as of Dec.5.2017
+#./run_measurement_IM && ./run_measurement_GAS && ./run_measurement_BF
+
+
+echo "done!!"

@@ -64,7 +64,7 @@ def testCoherence():
     plt.semilogx(f,deg,label='/'.join([chnameB,chnameA]))
     plt.legend()
     plt.savefig('test_coh.png')
-    plt.close()        
+    plt.close()       
 
   
 def test_plottf():
