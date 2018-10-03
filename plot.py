@@ -87,5 +87,4 @@ if __name__ == '__main__':
     sus = 'PR3'
     stage = 'IM'
     dof = 'L'
-    plottf(date,sus,stage,dof)
-    
+    plottf(date,sus,stage,dof)    
