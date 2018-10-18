@@ -31,7 +31,7 @@ class DttXMLSpectrum():
         self.M        = int(child.find("./Param[@Name='M']").text)
         self.dim      = child.find('./Array/Dim').text
         channel = child.findall("./Param[@Unit='channel']")
-        self.Channel  = map(lambda x:{x.attrib['Name']:x.text},channel)
+        self.Channel  = list(map(lambda x:{x.attrib['Name']:x.text},channel))
         Channel = self.Channel[0]
         for c in self.Channel:
             Channel.update(c)           
@@ -74,12 +74,12 @@ class DttData():
 
     def getAllSpectrumName(self):
         for s in self.spect:
-            print s.Name,s.Subtype,s.Channel['ChannelA']
+            print(s.Name,s.Subtype,s.Channel['ChannelA'])
 
     def getASDInfo(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
-        print asd[0].Averages
+        print(asd[0].Averages)
     
     def getASD(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
@@ -94,19 +94,19 @@ class DttData():
                 if 'Reference' in asd.Name:
                     return asd.f,asd.spectrum
             else:
-                print '!'
+                print('!')
                 return None
 
     def getResultNum(self,chname,ref=False):
-        asd = filter(lambda x:x.Subtype=="ASD", self.spect)
-        asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
+        asd = list(filter(lambda x:x.Subtype=="ASD", self.spect))
+        asd = list(filter(lambda x:x.Channel['ChannelA']==chname, asd))
         num = asd[0].Name
         return int(num.split('[')[1][0])
 
     def getCSD(self,chnameA,chnameB,ref=False):
         import re        
-        csd = filter(lambda x:x.Subtype=="CSD", self.spect)
-        csd = filter(lambda x:x.Channel['ChannelA']==chnameA, csd)
+        csd = list(filter(lambda x:x.Subtype=="CSD", self.spect))
+        csd = list(filter(lambda x:x.Channel['ChannelA']==chnameA, csd))
         numA = self.getResultNum(chnameA)
         for c in csd[0].Channel.keys():
             if csd[0].Channel[c] == chnameB:
@@ -118,7 +118,7 @@ class DttData():
                 #print numA,num,csd[0].Channel[c]
         return csd[0].f,csd[0].csd[num],csd[0].deg[num]
 
-    def getCoherence(self,chnameA,chnameB):        
+    def getCoherence(self,chnameA,chnameB,**kwargs):        
         f = None
         f,CSD_AB,deg = self.getCSD(chnameA,chnameB)
         f,ASD_A = self.getASD(chnameA)
