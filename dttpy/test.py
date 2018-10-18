@@ -4,7 +4,7 @@
 from plot import plottf
 
 def testReference():
-    xmlname = 'test.xml'
+    xmlname = 'test.xml'    
     d = DttData(xmlname)
     d.getAllSpectrumName()
 

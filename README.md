@@ -1,10 +1,13 @@
 Dttpy
 ====
 
-Dttpy can convert data embedded in the xml dtt file to numpy.array.
+Dttpy can convert data embedded in the xml diaggui file to numpy.array.
 
 ## Install
-Clone or download own workspace
+Clone or download own workspace.
+
+## How to use
+1. Prepare the diaggui file which is 
 
 ## Contribution
 Koki.Okutomi

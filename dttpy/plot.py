@@ -80,6 +80,9 @@ def plottf(date,sus,stage,dof,prefix='./healthCheckInspection'):
     plt.savefig(xmlname.replace('xml','png'))    
     plt.close()
     print('plot as {}'.format(xmlname.replace('xml','png')))
+
+
+    
     
     
 if __name__ == '__main__':

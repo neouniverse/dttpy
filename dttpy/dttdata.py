@@ -104,7 +104,7 @@ class DttData():
         return int(num.split('[')[1][0])
 
     def getCSD(self,chnameA,chnameB,ref=False):
-        import re        
+        import re
         csd = filter(lambda x:x.Subtype=="CSD", self.spect)
         csd = filter(lambda x:x.Channel['ChannelA']==chnameA, csd)
         numA = self.getResultNum(chnameA)
@@ -123,8 +123,9 @@ class DttData():
         f,CSD_AB,deg = self.getCSD(chnameA,chnameB)
         f,ASD_A = self.getASD(chnameA)
         f,ASD_B = self.getASD(chnameB)
-        mag = CSD_AB/(ASD_A*ASD_B)
-        return f,mag,deg
+        coh = CSD_AB/(ASD_A*ASD_B)
+        coh2 = coh**2
+        return f,coh2,deg
 
     def getTF(self,chnameA,chnameB):        
         f = None
