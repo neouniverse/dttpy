@@ -1,7 +1,7 @@
 #
 #! coding:utf-8
 
-from plot import plottf
+
 
 def testReference():
     xmlname = 'test.xml'
@@ -15,7 +15,7 @@ def testDttSpectrumInfo():
     d.getASDInfo(chnameA,ref=False)
     
 def testASD():
-    xmlname = 'test.xml'
+    xmlname = 'test.xml'    
     from dttdata import DttData
     import matplotlib.pyplot as plt    
     d = DttData(xmlname)    
@@ -55,7 +55,10 @@ def testCSD():
 
     
 def testCoherence():
-    from dttdata import DttData    
+    import sys
+    sys.path.insert(0,'../')    
+    from dttpy import DttData
+    #from dttpy import DttData
     d = DttData('test.xml')
     chnameA = 'K1:PEM-IXV_SEIS_NS_SENSINF_IN1_DQ'
     chnameB = 'K1:PEM-EXV_SEIS_NS_SENSINF_IN1_DQ'
@@ -63,6 +66,7 @@ def testCoherence():
     f,mag,deg = d.getCoherence(chnameA,chnameB,ref=False)
     
     import matplotlib.pyplot as plt        
+
     fig, (ax0,ax1) = plt.subplots(2,1,figsize=(12, 6), dpi=80)
     ax0.semilogx(f,mag,label='/'.join([chnameB,chnameA]))
     ax0.legend()
