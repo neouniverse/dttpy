@@ -45,7 +45,7 @@ plt.savefig('test_coh.png')
 plt.close()
 ```
 
-![result_image](./test_coh.png)
+![result_image](./tests/test_coh.png)
 
 ## Contribution
 Koki.Okutomi
