@@ -113,7 +113,6 @@ class DttData():
         for c in csd[0].Channel.keys():
             if csd[0].Channel[c] == chnameB:
                 num = int(c[:-1].split('[')[1])
-                print num
                 if num >= numA:
                     num = num -1
                 elif num < numA:
