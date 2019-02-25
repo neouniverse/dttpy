@@ -113,6 +113,7 @@ class DttData():
         for c in csd[0].Channel.keys():
             if csd[0].Channel[c] == chnameB:
                 num = int(c[:-1].split('[')[1])
+                print num
                 if num >= numA:
                     num = num -1
                 elif num < numA:
@@ -126,7 +127,7 @@ class DttData():
         f,CSD_AB,deg = self.getCSD(chnameA,chnameB)
         f,ASD_A = self.getASD(chnameA)
         f,ASD_B = self.getASD(chnameB)
-        mag = CSD_AB/(ASD_A*ASD_B)
+        mag = (CSD_AB/(ASD_A*ASD_B))**2
         return f,mag,deg
 
     def getTF(self,chnameA,chnameB):        
