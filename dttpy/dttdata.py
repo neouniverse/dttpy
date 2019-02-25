@@ -38,9 +38,8 @@ class DttXMLSpectrum():
         self.Channel = Channel
         
     def _getStream(self,child):
-        #print child.find('./Array')
         stream_str = child.find('./Array/Stream').text
-        stream_bin = binascii.a2b_base64(stream_str)
+        stream_bin = binascii.a2b_base64(stream_str)                   
         if self.Subtype == 'ASD': # float : asd           
             self.spectrum = np.frombuffer(stream_bin, dtype=np.float32)
             self.f        = np.arange(len(self.spectrum))*float(self.df)
@@ -72,18 +71,14 @@ class DttData():
         self.spect = [DttXMLSpectrum(child) for child in root.findall("./LIGO_LW[@Type='Spectrum']")]
         pass
 
-    
     def getAllSpectrumName(self):
         for s in self.spect:
             print(s.Name,s.Subtype,s.Channel['ChannelA'])
 
-            
     def getASDInfo(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
         print(asd[0].Averages)
-
-        
     def getASD(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
@@ -100,13 +95,11 @@ class DttData():
                 print('!')
                 return None
 
-            
     def getResultNum(self,chname,ref=False):
         asd = list(filter(lambda x:x.Subtype=="ASD", self.spect))
         asd = list(filter(lambda x:x.Channel['ChannelA']==chname, asd))
         num = asd[0].Name
         return int(num.split('[')[1][0])
-
     
     def getCSD(self,chnameA,chnameB,ref=False,**kwargs):
         import re        
