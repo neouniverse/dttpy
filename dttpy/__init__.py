@@ -1,4 +1,2 @@
 #
-#
-
 from .dttdata import DttData
