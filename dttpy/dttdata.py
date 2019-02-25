@@ -38,8 +38,9 @@ class DttXMLSpectrum():
         self.Channel = Channel
         
     def _getStream(self,child):
+        #print child.find('./Array')
         stream_str = child.find('./Array/Stream').text
-        stream_bin = binascii.a2b_base64(stream_str)                   
+        stream_bin = binascii.a2b_base64(stream_str)
         if self.Subtype == 'ASD': # float : asd           
             self.spectrum = np.frombuffer(stream_bin, dtype=np.float32)
             self.f        = np.arange(len(self.spectrum))*float(self.df)
@@ -69,18 +70,20 @@ class DttData():
         tree = ElementTree.parse(xmlname)
         root = tree.getroot()
         self.spect = [DttXMLSpectrum(child) for child in root.findall("./LIGO_LW[@Type='Spectrum']")]
-        #self.getAllSpectrumName()
         pass
 
+    
     def getAllSpectrumName(self):
         for s in self.spect:
             print(s.Name,s.Subtype,s.Channel['ChannelA'])
 
+            
     def getASDInfo(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
         print(asd[0].Averages)
-    
+
+        
     def getASD(self,chname,ref=False):
         asd = filter(lambda x:x.Subtype=="ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA']==chname, asd)
@@ -97,26 +100,33 @@ class DttData():
                 print('!')
                 return None
 
+            
     def getResultNum(self,chname,ref=False):
         asd = list(filter(lambda x:x.Subtype=="ASD", self.spect))
         asd = list(filter(lambda x:x.Channel['ChannelA']==chname, asd))
         num = asd[0].Name
         return int(num.split('[')[1][0])
 
-    def getCSD(self,chnameA,chnameB,ref=False):
+    
+    def getCSD(self,chnameA,chnameB,ref=False,**kwargs):
         import re        
         csd = list(filter(lambda x:x.Subtype=="CSD", self.spect))
         csd = list(filter(lambda x:x.Channel['ChannelA']==chnameA, csd))
-        numA = self.getResultNum(chnameA)
+        if not ref:
+            csd = list(filter(lambda x: 'Reference' not in x.Name , csd))
+            
+        numA = self.getResultNum(chnameA,**kwargs)
+            
         for c in csd[0].Channel.keys():
             if csd[0].Channel[c] == chnameB:
-                num = int(c.split('[')[1][0])
-                if num>numA:
+                num = int(c[:-1].split('[')[1])
+                if num >= numA:
                     num = num -1
-                elif num<numA:
+                elif num < numA:
                     num = num
                 #print numA,num,csd[0].Channel[c]
         return csd[0].f,csd[0].csd[num],csd[0].deg[num]
+    
 
     def getCoherence(self,chnameA,chnameB,**kwargs):        
         f = None
