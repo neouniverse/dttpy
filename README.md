@@ -1,4 +1,4 @@
-Dttpy
+# Dttpy
 ====
 
 Dttpy can convert data embedded in the xml diaggui file to numpy.array and FrequencySeries.
@@ -24,7 +24,6 @@ chnameB = 'K1:PEM-EXV_SEIS_NS_SENSINF_IN1_DQ'
 coherence = d.getCoherence(chnameA, chnameB, ref=False, gwpy = True)
 csd = d.getCSD(chnameA, chnameB, ref=False, gwpy = True)
 ...
-
 ```
 
 Also you can plot.
