@@ -45,7 +45,6 @@ ax1.set_xlabel('Frequency [Hz]',fontsioze=20)
 plt.savefig('test_coh.png')
 plt.close()
 ```
-
 ```
 
 Or, if you want to use gwpy
@@ -77,7 +76,7 @@ ax[1].set_ylabel('Phase [deg]',fontsize=20)
 plot.tight_layout()
 plot.savefig('test_coh.png')
 plt.close()
-...
+```
 
 ![result_image](./tests/test_coh.png)
 
