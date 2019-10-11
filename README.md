@@ -1,5 +1,4 @@
 # Dttpy
-====
 
 Dttpy can convert data embedded in the xml diaggui file to numpy.array and FrequencySeries.
 
