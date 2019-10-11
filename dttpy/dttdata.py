@@ -6,7 +6,6 @@ from xml.etree import ElementTree
 import base64
 import binascii
 import numpy as np
-import matplotlib.pyplot as plt
 from gwpy.frequencyseries import FrequencySeries
 
 SubType = {'1':'ASD','2':'CSD','3':'COH'}
@@ -50,19 +49,14 @@ class DttXMLSpectrum():
             real = real.reshape(self.M,self.N)
             imag = self.spectrum[1::2]
             imag = imag.reshape(self.M,self.N)
-            imag = 1j*imag
-            c = real+imag
-            #print c[0,:5]
-            # Cxy
-            # x:ChannelA
-            # y:ChannelB[0-]
+            imag = 1j * imag
+            c = real + imag
             self.csd = np.absolute(c)
             self.deg = np.rad2deg(np.angle(c))            
             self.f        = np.arange(len(self.csd[0]))*float(self.df)
-        elif self.Subtype == '???': # float : coherence?
+        elif self.Subtype == 'COH': # float : coherence
             self.spectrum = np.frombuffer(stream_bin, dtype=np.float32)
             self.f        = np.arange(len(self.spectrum))*float(self.df)
-            #print len(self.spectrum),len(self.f)
 
 
 class DttData():
@@ -71,15 +65,19 @@ class DttData():
         root = tree.getroot()
         self.spect = [DttXMLSpectrum(child) for child in root.findall("./LIGO_LW[@Type='Spectrum']")]
         pass
-
+ 
     def getAllSpectrumName(self):
-        for s in self.spect:
-            print(s.Name, s.Subtype, s.Channel['ChannelA'])
+        allSpectrumName = []
+        spect = filter(lambda x:x.Subtype == "ASD" or x.Subtype == "CSD", self.spect)
+        for s in spect:
+            for channel in s.Channel:
+                allSpectrumName.append([s.Subtype, channel, s.Channel[channel]])
+        return allSpectrumName
 
-    def getASDInfo(self, chname, ref = False):
+    def getAverage(self, chname, ref = False):
         asd = filter(lambda x:x.Subtype == "ASD", self.spect)
         asd = filter(lambda x:x.Channel['ChannelA'] == chname, asd)
-        print(asd[0].Averages)
+        return asd[0].Averages
         
     def getASD(self, chname, ref = False, gwpy = False):
         asd = filter(lambda x:x.Subtype == "ASD", self.spect)
@@ -115,13 +113,12 @@ class DttData():
         return int(num.split('[')[1][0])
     
     def getCSD(self, chnameA, chnameB, ref=False, gwpy = False, **kwargs):
-        csd = list(filter(lambda x:x.Subtype=="CSD", self.spect))
+        csd = list(filter(lambda x:x.Subtype == "CSD", self.spect))
         csd = list(filter(lambda x:x.Channel['ChannelA']==chnameA, csd))
         if not ref:
             csd = list(filter(lambda x: 'Reference' not in x.Name , csd))
             
         numA = self.getResultNum(chnameA,**kwargs)
-            
         for c in csd[0].Channel.keys():
             if csd[0].Channel[c] == chnameB:
                 num = int(c[:-1].split('[')[1])
@@ -129,7 +126,6 @@ class DttData():
                     num = num -1
                 elif num < numA:
                     num = num
-        
         if gwpy == False:
             return csd[0].f, csd[0].csd[num], csd[0].deg[num]
         elif gwpy == True:
@@ -149,12 +145,9 @@ class DttData():
         f, ASD_B = self.getASD(chnameB)
         mag = (CSD_AB/(ASD_A*ASD_B)) ** 2
         if gwpy == False:
-            return f,mag,deg
+            return f, mag, deg
         elif gwpy == True:
-            rad = np.deg2rad(deg)
-            real = mag * np.cos(rad)
-            imag = mag * np.sin(rad)
-            return FrequencySeries(value = real + imag * 1j, frequencies = f, channel = chnameA + ' ' +chnameB)
+            return FrequencySeries(data = mag, frequencies = f, channel = chnameA + ' ' +chnameB)
         else:
             print('!')
             return None
