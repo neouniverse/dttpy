@@ -2,6 +2,7 @@ Dttpy
 ====
 
 Dttpy can convert data embedded in the xml diaggui file to numpy.array and FrequencySeries.
+
 This version is for GWpy user.
 
 ## Install
@@ -45,11 +46,8 @@ ax1.set_xlabel('Frequency [Hz]',fontsioze=20)
 plt.savefig('test_coh.png')
 plt.close()
 ```
-```
 
 Or, if you want to use gwpy
-
-```
 ```
 import matplotlib.pyplot as plt
 import sys
