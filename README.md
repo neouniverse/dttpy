@@ -17,10 +17,7 @@ Clone or download own workspace.
 
 
 ```
-import matplotlib.pyplot as plt
-import sys
 from dttpy.dttdata import DttData
-import numpy as np
 d = DttData('test.xml')
 chnameA = 'K1:PEM-IXV_SEIS_NS_SENSINF_IN1_DQ'
 chnameB = 'K1:PEM-EXV_SEIS_NS_SENSINF_IN1_DQ'
@@ -34,7 +31,9 @@ Also you can plot.
 
 ```
 ...
+import matplotlib.pyplot as plt
 from gwpy.plot import Plot
+import numpy as np
 plot = Plot(coherence, np.angle(csd, deg = True), figsize=(12, 6), dpi=80, separate = True, sharex = True)
 ax = plot.get_axes()
 for a in ax:
