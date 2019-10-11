@@ -1,12 +1,12 @@
-
 #
 #! coding:utf-8
 
 
 import numpy as np
-from gwpy.frequencyseries import FrequencySeries
-
+import sys
+sys.path.insert(0,'../dttpy') 
 from dttdata import DttData
+from gwpy.frequencyseries import FrequencySeries
 
 SubType = {'1':'ASD','2':'CSD','3':'COH'}
 
@@ -14,25 +14,32 @@ class ExpandedDttData(DttData):
     def __init__(self, xmlname):
         super(ExpandedDttData, self).__init__(xmlname)
         pass
- 
-    def getAllSpectrumName(self):
-        allSpectrumName = []
-        spect = filter(lambda x:x.Subtype == "ASD" or x.Subtype == "CSD", self.spect)
-        for s in spect:
-            for channel in s.Channel:
-                allSpectrumName.append([s.Subtype, channel, s.Channel[channel]])
-        return allSpectrumName
+
         
-    def printAllASDInfo(self,ref=False):
+    def getCoherence(self, chnameA, chnameB, ref=False, gwpy = False, **kwargs):
+        coherence = list(filter(lambda x:x.Subtype == "COH", self.spect))
+        coherence = list(filter(lambda x:x.Channel['ChannelA'] == chnameA, coherence))
+        if not ref:
+            coherence = list(filter(lambda x: 'Reference' not in x.Name , coherence))
+        if gwpy == False:
+            return coherence[0].f, coherence[0].spectrum
+        elif gwpy == True:
+            print(coherence[0].spectrum)
+            print(coherence[0].f)
+            return FrequencySeries(data = coherence[0].spectrum, frequencies = coherence[0].f, channel = chnameA + ' ' +chnameB)
+        else:
+            print('!')
+            return None
+
+    def getAllASDInfo(self,ref = False):
+        allASDInfo = {}
         asd = filter(lambda x:x.Subtype == "ASD", self.spect)
         for a in asd:
             for channel in a.Channel:
-                print('{ ' + channel, a.Channel[channel])
-                print(' average: ' + format(a.Averages))
-                print(' t0: ' + a.t0)
-                print(' dt: ' + a.dt + ' }')
+                allASDInfo[a.Channel[channel]] = {'channel': channel, 'average': a.Averages, 't0': a.t0, 'dt': a.dt}
+        return allASDInfo
             
-    def getAllASDName(self,ref=False):
+    def getAllASDName(self,ref = False):
         names = []
         for s in self.spect:
             if s.Subtype == 'ASD':                
@@ -89,29 +96,25 @@ class ExpandedDttData(DttData):
         return alignNames
     
     def getAllCSD(self, ref = False, gwpy = False):
-        anames = self.getAllAChName(ref)
-        bnames = self.getAllASDName(ref)
+        chNameAs = self.getAllAChName(ref)
+        chNameBs = self.getAllASDName(ref)
         flag = 0
-        CSDs= []
-        for i in range(len(anames)):
-            for j in range(len(bnames)):
-                if i<j:
-                    if self.getResultNum(anames[i]) == 0 or self.getResultNum(bnames[j]) == 0:
+        CSDs = [[] for i in range(int(len(chNameAs) * (len(chNameAs) - 1) / 2))]
+        l = 0
+        for i, chNameA in enumerate(chNameAs):
+            for j,chNameB in enumerate(chNameBs):
+                if i < j:
+                    if self.getResultNum(chNameA) == 0 or self.getResultNum(chNameB) == 0:
                         flag = -1
                     if flag == 0:
-                        chname = self.alignCh([anames[i],bnames[j]])
-                        achname = chname[0]
-                        bchname = chname[1]
-                    else:
-                        achname = anames[i]
-                        bchname = bnames[j]
+                        chNames = self.alignCh([chNameA, chNameB])
+                        chNameA = chNames[0]
+                        chNameB = chNames[1]
                     if gwpy:
-                        CSD = self.getCSD(achname, bchname, ref, gwpy)
-                        CSDs.append(CSD)
+                        CSDs[l] = self.getCSD(chNameA, chNameB, ref, gwpy)
+                        l+= 1
                     else:
-                        f, mag, deg = self.getCSD(achname, bchname, ref, gwpy)
-                        CSDs.append([f, mag, deg, achname, bchname])
-        CSDs =  np.array(CSDs)
+                        CSDs[l] = [self.getCSD(chNameA, chNameB, ref, gwpy), chNameA, chNameB]
         return CSDs
         
     def getAllCoherence(self, ref = False, gwpy = False):
