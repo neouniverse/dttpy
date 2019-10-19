@@ -48,7 +48,7 @@ plt.close()
 ![result_image](./tests/test_coh.png)
 
 ## Contribution
-Koki.Okutomi
+Koki.Okutomi, Taiki.Tanaka
 
 ## Licence
 
