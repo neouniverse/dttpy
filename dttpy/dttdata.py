@@ -7,6 +7,7 @@ import base64
 import binascii
 import numpy as np
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 
 SubType = {'1':'ASD','2':'CSD','3':'TF','4':'???','5':'COH'}
 average_type = {'0':'Fixed','1':'Exponential','2':'Accumulative'} # not comfirmed
@@ -35,9 +36,9 @@ class DttXMLSpectrum():
         self.dim      = child.find('./Array/Dim').text
         channel = child.findall("./Param[@Unit='channel']")
         self.Channel  = list(map(lambda x:{x.attrib['Name']:x.text},channel))
-        Channel = self.Channel[0]
+        Channel = OrderedDict(self.Channel[0])
         for c in self.Channel:
-            Channel.update(c)           
+            Channel.update(OrderedDict(c))
         self.Channel = Channel
 
     def showInfo(self):
@@ -113,9 +114,9 @@ class DttXMLTransferFunction():
         self.dim      = child.find('./Array/Dim').text
         channel = child.findall("./Param[@Unit='channel']")
         self.Channel  = list(map(lambda x:{x.attrib['Name']:x.text},channel))
-        Channel = self.Channel[0]
+        Channel = OrderedDict(self.Channel[0])
         for c in self.Channel:
-            Channel.update(c)           
+            Channel.update(OrderedDict(c))
         self.Channel = Channel
 
     def showInfo(self):
